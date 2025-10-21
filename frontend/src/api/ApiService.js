@@ -2,7 +2,6 @@ import axios from "axios";
 
 export default class ApiService {
 
-    static API_URL = "http://localhost:3030/api"
 
 
     static saveToken(token) {
