@@ -396,12 +396,3 @@ npm run build
 
 </div>
 ```
-
-Simply copy this entire markdown code and paste it into a file named `README.md` in your project root directory. You can customize the following sections:
-
-- Replace `[GitHub URL]` with your actual GitHub repository URL
-- Replace `Your Name` with your actual name
-- Replace `your.email@example.com` with your email
-- Add actual screenshots in the Screenshots section if you want
-
-The markdown will render beautifully on GitHub, GitLab, or any markdown viewer!
