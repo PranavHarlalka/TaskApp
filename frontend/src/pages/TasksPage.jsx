@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 import { Link, useNavigate } from "react-router-dom";
 import ApiService from "../api/ApiService"
+import "../styles/TaskPages.css"
 
 const TasksPage = () => {
 
@@ -104,49 +105,64 @@ const TasksPage = () => {
     }
 
     return (
-        <div className="tasks-container">
-            <div className="tasks-header">
-                <h2>My Tasks</h2>
-                <Link to="/tasks/add" className="add-task-button">
-                    + Add New Task
-                </Link>
-            </div>
-
-            {error && <div className="error-message">{error}</div>}
-
-            <div className="tasks-filters">
-                <div className="filter-group">
-                    <label htmlFor="priority-filter">Priority:</label>
-                    <select
-                        id="priority-filter"
-                        value={priorityFilter}
-                        onChange={(e) => setPriorityFilter(e.target.value)}
-                    >
-                        <option value="ALL">All Priorities</option>
-                        <option value="HIGH">High</option>
-                        <option value="MEDIUM">Medium</option>
-                        <option value="LOW">Low</option>
-                    </select>
+        <div className="tasks-page-wrapper">
+            <div className="tasks-container">
+                <div className="tasks-header">
+                    <div className="header-content">
+                        <h2>✨ My Tasks</h2>
+                        <p className="header-subtitle">
+                            {filteredTasks.length} {filteredTasks.length === 1 ? 'task' : 'tasks'} 
+                            {completionFilter === 'COMPLETED' ? ' completed' : 
+                             completionFilter === 'PENDING' ? ' pending' : ' total'}
+                        </p>
+                    </div>
+                    <Link to="/tasks/add" className="add-task-button">
+                        <span className="button-icon">+</span>
+                        Add New Task
+                    </Link>
                 </div>
 
-                <div className="filter-group">
-                    <label htmlFor="completion-filter">Status:</label>
-                    <select
-                        id="completion-filter"
-                        value={completionFilter}
-                        onChange={(e) => setCompletionFilter(e.target.value)}
-                    >
-                        <option value="ALL">All Tasks</option>
-                        <option value="COMPLETED">Completed</option>
-                        <option value="PENDING">Pending</option>
-                    </select>
-                </div>
-            </div>
+                {error && <div className="error-message">⚠️ {error}</div>}
 
-            <div className="tasks-list">
-                {filteredTasks.length === 0 ? (
-                    <div className="no-tasks">
-                        <p>No tasks found matching your filters.</p>
+                <div className="tasks-filters">
+                    <div className="filters-wrapper">
+                        <div className="filter-group">
+                            <label htmlFor="priority-filter">
+                                <span className="filter-icon">🎯</span>
+                                Priority
+                            </label>
+                            <select
+                                id="priority-filter"
+                                value={priorityFilter}
+                                onChange={(e) => setPriorityFilter(e.target.value)}
+                                className="filter-select"
+                            >
+                                <option value="ALL">All Priorities</option>
+                                <option value="HIGH">🔴 High</option>
+                                <option value="MEDIUM">🟡 Medium</option>
+                                <option value="LOW">🟢 Low</option>
+                            </select>
+                        </div>
+
+                        <div className="filter-group">
+                            <label htmlFor="completion-filter">
+                                <span className="filter-icon">📊</span>
+                                Status
+                            </label>
+                            <select
+                                id="completion-filter"
+                                value={completionFilter}
+                                onChange={(e) => setCompletionFilter(e.target.value)}
+                                className="filter-select"
+                            >
+                                <option value="ALL">All Tasks</option>
+                                <option value="COMPLETED">✓ Completed</option>
+                                <option value="PENDING">⏳ Pending</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    {(priorityFilter !== 'ALL' || completionFilter !== 'ALL') && (
                         <button
                             className="reset-filters-button"
                             onClick={() => {
@@ -154,46 +170,97 @@ const TasksPage = () => {
                                 setCompletionFilter('ALL');
                             }}
                         >
-                            Reset Filters
+                            ✕ Clear Filters
                         </button>
-                    </div>
-                ) : (
-                    filteredTasks.map(task => (
-                        <div key={task.id} className={`task-card ${task.completed ? 'completed' : ''}`}>
-                            <div className="task-content">
-                                <div className="task-header">
-                                    <h3>{task.title}</h3>
-                                    <span className={`priority-badge ${task.priority.toLowerCase()}`}>
-                                        {task.priority}
-                                    </span>
-                                </div>
-                                <p className="task-description">{task.description}</p>
-                                <div className="task-meta">
-                                    <span className="due-date">
-                                        Due: {new Date(task.dueDate).toLocaleDateString()}
-                                    </span>
-                                    <span className="created-at">
-                                        Created: {new Date(task.createdAt).toLocaleDateString()}
-                                    </span>
-                                </div>
-                            </div>
-                            <div className="task-actions">
+                    )}
+                </div>
+
+                <div className="tasks-list">
+                    {filteredTasks.length === 0 ? (
+                        <div className="no-tasks">
+                            <div className="no-tasks-icon">📭</div>
+                            <h3>No Tasks Found</h3>
+                            <p>
+                                {priorityFilter !== 'ALL' || completionFilter !== 'ALL' 
+                                    ? "No tasks match your current filters. Try adjusting them!"
+                                    : "You don't have any tasks yet. Create your first task to get started!"
+                                }
+                            </p>
+                            {(priorityFilter !== 'ALL' || completionFilter !== 'ALL') ? (
                                 <button
-                                    onClick={() => toggleComplete(task.id, task.completed)}
-                                    className={`complete-button ${task.completed ? 'completed' : ''}`}
+                                    className="reset-filters-button-large"
+                                    onClick={() => {
+                                        setPriorityFilter('ALL');
+                                        setCompletionFilter('ALL');
+                                    }}
                                 >
-                                    {task.completed ? '✓ Completed' : 'Mark Complete'}
+                                    Reset Filters
                                 </button>
-                                <Link
-                                    to={`/tasks/edit/${task.id}`}
-                                    className="edit-button"
-                                >
-                                    Edit
+                            ) : (
+                                <Link to="/tasks/add" className="add-first-task-button">
+                                    Create Your First Task
                                 </Link>
-                            </div>
+                            )}
                         </div>
-                    ))
-                )}
+                    ) : (
+                        filteredTasks.map(task => (
+                            <div key={task.id} className={`task-card ${task.completed ? 'completed' : ''} priority-${task.priority.toLowerCase()}`}>
+                                <div className="task-card-inner">
+                                    <div className="task-content">
+                                        <div className="task-header">
+                                            <div className="task-title-section">
+                                                <div className={`task-checkbox ${task.completed ? 'checked' : ''}`}>
+                                                    {task.completed && '✓'}
+                                                </div>
+                                                <h3 className={task.completed ? 'task-completed' : ''}>{task.title}</h3>
+                                            </div>
+                                            <span className={`priority-badge ${task.priority.toLowerCase()}`}>
+                                                {task.priority === 'HIGH' ? '🔴' : task.priority === 'MEDIUM' ? '🟡' : '🟢'}
+                                                {task.priority}
+                                            </span>
+                                        </div>
+                                        <p className="task-description">{task.description}</p>
+                                        <div className="task-meta">
+                                            <span className="meta-item due-date">
+                                                <span className="meta-icon">📅</span>
+                                                Due: {new Date(task.dueDate).toLocaleDateString('en-US', { 
+                                                    month: 'short', 
+                                                    day: 'numeric', 
+                                                    year: 'numeric' 
+                                                })}
+                                            </span>
+                                            <span className="meta-item created-at">
+                                                <span className="meta-icon">🕒</span>
+                                                Created: {new Date(task.createdAt).toLocaleDateString('en-US', { 
+                                                    month: 'short', 
+                                                    day: 'numeric' 
+                                                })}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div className="task-actions">
+                                        <button
+                                            onClick={() => toggleComplete(task.id, task.completed)}
+                                            className={`complete-button ${task.completed ? 'completed' : ''}`}
+                                        >
+                                            <span className="button-icon">
+                                                {task.completed ? '✓' : '○'}
+                                            </span>
+                                            {task.completed ? 'Completed' : 'Mark Complete'}
+                                        </button>
+                                        <Link
+                                            to={`/tasks/edit/${task.id}`}
+                                            className="edit-button"
+                                        >
+                                            <span className="button-icon">✏️</span>
+                                            Edit
+                                        </Link>
+                                    </div>
+                                </div>
+                            </div>
+                        ))
+                    )}
+                </div>
             </div>
         </div>
     );

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import ApiService from '../api/ApiService';
+import "../styles/TaskPages.css"
 
 
 const TaskFormPage = () => {
@@ -82,104 +83,143 @@ const TaskFormPage = () => {
 
 
     return (
-        <div className="task-form-container">
-            <h2>{isEdit ? 'Edit Task' : 'Add New Task'}</h2>
-
-            {error && <div className="error-message">{error}</div>}
-
-            <form onSubmit={handleSubmit}>
-                <div className="form-group">
-                    <label htmlFor="title">Title*</label>
-                    <input
-                        type="text"
-                        id="title"
-                        name="title"
-                        value={formData.title}
-                        onChange={handleChange}
-                        placeholder="Enter task title"
-                        required
-                    />
+        <div className="task-form-wrapper">
+            <div className="task-form-container">
+                <div className="form-header">
+                    <h2>
+                        <span className="form-icon">{isEdit ? '✏️' : '➕'}</span>
+                        {isEdit ? 'Edit Task' : 'Create New Task'}
+                    </h2>
+                    <p className="form-subtitle">
+                        {isEdit 
+                            ? 'Update the details of your task' 
+                            : 'Fill in the details to create a new task'
+                        }
+                    </p>
                 </div>
 
-                <div className="form-group">
-                    <label htmlFor="description">Description</label>
-                    <textarea
-                        id="description"
-                        name="description"
-                        value={formData.description}
-                        onChange={handleChange}
-                        placeholder="Enter task description"
-                        rows="4"
-                    />
-                </div>
+                {error && <div className="error-message">⚠️ {error}</div>}
 
-                <div className="form-group">
-                    <label htmlFor="dueDate">Due Date</label>
-                    <input
-                        type="date"
-                        id="dueDate"
-                        name="dueDate"
-                        value={formData.dueDate}
-                        onChange={handleChange}
-                    />
-                </div>
-
-                <div className="form-group">
-                    <label htmlFor="priority">Priority</label>
-                    <select
-                        id="priority"
-                        name="priority"
-                        value={formData.priority}
-                        onChange={handleChange}
-                    >
-                        <option value="HIGH">High</option>
-                        <option value="MEDIUM">Medium</option>
-                        <option value="LOW">Low</option>
-                    </select>
-                </div>
-
-                {isEdit && (
-                    <div className="form-group checkbox-group">
+                <form onSubmit={handleSubmit} className="task-form">
+                    <div className="form-group">
+                        <label htmlFor="title">
+                            <span className="label-icon">📝</span>
+                            Task Title*
+                        </label>
                         <input
-                            type="checkbox"
-                            id="completed"
-                            name="completed"
-                            checked={formData.completed}
-                            onChange={(e) => setFormData(prev => ({
-                                ...prev,
-                                completed: e.target.checked
-                            }))}
+                            type="text"
+                            id="title"
+                            name="title"
+                            value={formData.title}
+                            onChange={handleChange}
+                            placeholder="e.g., Complete project documentation"
+                            required
+                            className="form-input"
                         />
-                        <label htmlFor="completed">Completed</label>
                     </div>
-                )}
 
+                    <div className="form-group">
+                        <label htmlFor="description">
+                            <span className="label-icon">📄</span>
+                            Description
+                        </label>
+                        <textarea
+                            id="description"
+                            name="description"
+                            value={formData.description}
+                            onChange={handleChange}
+                            placeholder="Add more details about this task..."
+                            rows="5"
+                            className="form-textarea"
+                        />
+                    </div>
 
+                    <div className="form-row">
+                        <div className="form-group">
+                            <label htmlFor="dueDate">
+                                <span className="label-icon">📅</span>
+                                Due Date
+                            </label>
+                            <input
+                                type="date"
+                                id="dueDate"
+                                name="dueDate"
+                                value={formData.dueDate}
+                                onChange={handleChange}
+                                className="form-input"
+                            />
+                        </div>
 
-                <div className="form-actions">
-                    <button type="submit" className="save-button">
-                        {isEdit ? 'Update Task' : 'Create Task'}
-                    </button>
+                        <div className="form-group">
+                            <label htmlFor="priority">
+                                <span className="label-icon">🎯</span>
+                                Priority Level
+                            </label>
+                            <select
+                                id="priority"
+                                name="priority"
+                                value={formData.priority}
+                                onChange={handleChange}
+                                className="form-select"
+                            >
+                                <option value="HIGH">🔴 High Priority</option>
+                                <option value="MEDIUM">🟡 Medium Priority</option>
+                                <option value="LOW">🟢 Low Priority</option>
+                            </select>
+                        </div>
+                    </div>
+
                     {isEdit && (
-                        <div>
+                        <div className="form-group checkbox-group">
+                            <label className="checkbox-label">
+                                <input
+                                    type="checkbox"
+                                    id="completed"
+                                    name="completed"
+                                    checked={formData.completed}
+                                    onChange={(e) => setFormData(prev => ({
+                                        ...prev,
+                                        completed: e.target.checked
+                                    }))}
+                                    className="checkbox-input"
+                                />
+                                <span className="checkbox-custom"></span>
+                                <span className="checkbox-text">
+                                    <span className="checkbox-icon">✓</span>
+                                    Mark this task as completed
+                                </span>
+                            </label>
+                        </div>
+                    )}
+
+                    <div className="form-actions">
+                        <button type="submit" className="save-button">
+                            <span className="button-icon">{isEdit ? '💾' : '✨'}</span>
+                            {isEdit ? 'Update Task' : 'Create Task'}
+                        </button>
+                        
+                        <button
+                            type="button"
+                            className="cancel-button"
+                            onClick={() => navigate('/tasks')}
+                        >
+                            <span className="button-icon">✕</span>
+                            Cancel
+                        </button>
+                        
+                        {isEdit && (
                             <button
+                                type="button"
                                 onClick={() => handleDelete(id)}
                                 className="delete-button"
                             >
-                                Delete
+                                <span className="button-icon">🗑️</span>
+                                Delete Task
                             </button>
-
-                            <button
-                                type="button"
-                                className="cancel-button"
-                                onClick={() => navigate('/tasks')}
-                            >
-                                Cancel
-                            </button>
-                        </div>
-                    )}
-                </div>
-            </form>
+                        )}
+                    </div>
+                </form>
+            </div>
         </div>
     );
 };
